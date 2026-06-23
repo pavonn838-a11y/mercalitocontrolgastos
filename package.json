@@ -1,0 +1,17 @@
+{
+  "name": "mercalito-control-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "App interna local para control financiero de Mercalito.",
+  "type": "module",
+  "scripts": {
+    "dev": "node server/server.js",
+    "start": "node server/server.js",
+    "start:prod": "HOST=0.0.0.0 node server/server.js",
+    "seed": "node scripts/seed.js",
+    "supabase:seed": "node scripts/supabase_seed.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

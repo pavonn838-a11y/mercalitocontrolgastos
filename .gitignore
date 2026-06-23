@@ -1,0 +1,9 @@
+data/db.json
+data/imports/*
+data/uploads/*
+data/attachments/*
+!.gitkeep
+node_modules/
+.env
+__pycache__/
+*.pyc

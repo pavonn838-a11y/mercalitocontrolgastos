@@ -1,0 +1,16 @@
+services:
+  mercalito-control:
+    build: .
+    container_name: mercalito-control
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3100
+      DATA_DIR: /app/data
+      DEFAULT_ADMIN_EMAIL: admin@mercalito.local
+      DEFAULT_ADMIN_PASSWORD: cambiar-esta-clave
+      APP_SECRET: cambiar-este-secreto
+    volumes:
+      - ./data:/app/data

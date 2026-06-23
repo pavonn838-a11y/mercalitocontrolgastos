@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: mercalito-control
+    env: docker
+    plan: starter
+    autoDeploy: false
+    healthCheckPath: /api/health
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 3100
+      - key: DATA_DIR
+        value: /app/data
+      - key: APP_SECRET
+        generateValue: true
+      - key: DEFAULT_ADMIN_EMAIL
+        value: admin@mercalito.local
+      - key: DEFAULT_ADMIN_PASSWORD
+        sync: false
+    disk:
+      name: mercalito-data
+      mountPath: /app/data
+      sizeGB: 1
