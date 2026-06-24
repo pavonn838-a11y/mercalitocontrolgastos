@@ -2,6 +2,8 @@ import crypto from "node:crypto";
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const anonKey = process.env.SUPABASE_ANON_KEY;
+const apiKey = anonKey || serviceKey;
 const appSecret = process.env.APP_SECRET || "change-this-secret";
 
 const resources = {
@@ -73,8 +75,8 @@ const checkStatuses = ["Emitido", "Pendiente", "Pagado", "Rechazado", "Anulado",
 
 export async function handler(event) {
   try {
-    if (!supabaseUrl || !serviceKey) {
-      return json(500, { error: "Faltan variables SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY" });
+    if (!supabaseUrl || !apiKey) {
+      return json(500, { error: "Faltan variables SUPABASE_URL o SUPABASE_ANON_KEY" });
     }
     const route = decodeURIComponent((event.path || "").replace(/^\/api\/?/, "").replace(/^\/\.netlify\/functions\/api\/?/, ""));
     const method = event.httpMethod || "GET";
@@ -354,8 +356,8 @@ async function supaDelete(table, id) {
 
 function supaHeaders(extra = {}) {
   return {
-    apikey: serviceKey,
-    Authorization: `Bearer ${serviceKey}`,
+    apikey: apiKey,
+    Authorization: `Bearer ${apiKey}`,
     "Content-Type": "application/json",
     ...extra,
   };
