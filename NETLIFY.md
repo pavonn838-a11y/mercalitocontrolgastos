@@ -28,10 +28,15 @@ Arquitectura recomendada:
 - Archivos adjuntos: Supabase Storage, S3 o Cloudflare R2
 - Login: auth propia o Supabase Auth
 
-## Qué habría que migrar
+## Qué ya está migrado
 
-1. Reemplazar `data/db.json` por PostgreSQL.
-2. Crear tablas:
+1. Las tablas están definidas en `supabase/schema.sql`.
+2. Los datos iniciales se suben con `npm run supabase:seed`.
+3. Las rutas `/api/...` ya están redirigidas a Netlify Functions por `netlify.toml`.
+4. La Function principal está en `netlify/functions/api.mjs`.
+5. El frontend sigue publicado desde `public`.
+
+Tablas incluidas:
    - users
    - roles
    - branches
@@ -48,18 +53,21 @@ Arquitectura recomendada:
    - import_batches
    - audit_logs
    - alerts
-3. Convertir rutas `/api/...` a Netlify Functions.
-4. Mover archivos adjuntos a storage externo.
-5. Rehacer el importador Excel para funcionar dentro de Functions.
+Pendiente para una versión posterior:
+
+- adjuntos reales en Supabase Storage
+- importador Excel directamente online en Netlify
 
 ## Variables necesarias
 
 ```text
-DATABASE_URL=postgres://...
+SUPABASE_URL=https://...
+SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
+DATABASE_URL=postgresql://...
 APP_SECRET=clave-larga-segura
 DEFAULT_ADMIN_EMAIL=admin@mercalito.local
 DEFAULT_ADMIN_PASSWORD=clave-segura
-STORAGE_BUCKET=...
 ```
 
 ## Camino recomendado
@@ -67,10 +75,28 @@ STORAGE_BUCKET=...
 Para publicar rápido y bien:
 
 1. Crear Supabase.
-2. Crear proyecto en Netlify.
-3. Migrar la app a Postgres + Functions.
+2. Ejecutar `supabase/schema.sql`.
+3. Cargar datos con `npm run supabase:seed`.
 4. Subir el repo a GitHub.
 5. Conectar GitHub con Netlify.
+6. Configurar las variables de entorno.
+
+## Configuración de Netlify
+
+En la pantalla de deploy:
+
+```text
+Base directory: vacío
+Build command: vacío
+Publish directory: public
+Functions directory: netlify/functions
+```
+
+El archivo `netlify.toml` ya define:
+
+- publicación desde `public`
+- funciones desde `netlify/functions`
+- redirección `/api/*` hacia la Function
 
 ## Subir los datos iniciales a Supabase
 
@@ -82,13 +108,8 @@ npm run supabase:seed
 
 Eso sube a Supabase los datos actuales de `data/db.json`, incluyendo gastos de mayo, proveedores, sucursales, categorías y facturación.
 
-## Alternativa más simple
+## Limitaciones actuales
 
-Si querés subir la app actual sin migración, conviene más:
-
-- Render
-- Railway
-- Fly.io
-- VPS con Docker
-
-Porque ahí sí puede correr el servidor Node y guardar datos en un volumen persistente.
+- El importador Excel online devuelve un aviso de pendiente.
+- Para importar nuevos Excel por ahora conviene usar la app local y luego subir datos.
+- Adjuntos/facturas todavía no se guardan en Supabase Storage.
